@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import Login from './Pages/Login'
-import Cadastro from './Pages/Cadastro' 
+import Login from './Pages/Login/Login'
+import Cadastro from './Pages/Cadastro/Cadastro' 
 function App() {
 
   const [telaAtual, setTelaAtual] = useState('login')
@@ -10,7 +10,7 @@ function App() {
       {telaAtual === 'login' ? (
         
         <Login onMudarParaCadastro={() => setTelaAtual('cadastro')} />
-      ) : (
+      ) :(
        
         <Cadastro onMudarParaLogin={() => setTelaAtual('login')} />
       )}

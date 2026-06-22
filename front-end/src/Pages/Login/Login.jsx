@@ -1,4 +1,4 @@
-import '../Style/Login.css'
+import './Login.css'
 
 function Login({ onMudarParaCadastro }) {
     return (
