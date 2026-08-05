@@ -1,4 +1,3 @@
-
 .container-cadastro {
     width: 100%;
     max-width: 600px;
@@ -8,6 +7,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     animation: aparecer 0.4s ease-in-out;
 }
+
 .container-cadastro h1 {
     text-align: center;
     color: #2951a8;
@@ -48,6 +48,7 @@
     border-radius: 10px;
     font-size: 1rem;
     transition: 0.3s;
+    box-sizing: border-box;
 }
 
 .container-cadastro input:focus {
@@ -56,7 +57,13 @@
     box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
 }
 
-.container-cadastro button {
+.container-cadastro input:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.container-cadastro button[type="submit"],
+.container-cadastro form > button {
     margin-top: 10px;
     padding: 16px;
     border: none;
@@ -69,9 +76,17 @@
     transition: 0.3s;
 }
 
-.container-cadastro button:hover {
+.container-cadastro button[type="submit"]:hover,
+.container-cadastro form > button:hover {
     background-color: #1d4ed8;
     transform: translateY(-2px);
+}
+
+.container-cadastro button[type="submit"]:disabled,
+.container-cadastro form > button:disabled {
+    background-color: #93b4f0;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .container-cadastro p {
@@ -95,6 +110,104 @@
     color: #666;
     margin-top: -10px;
 }
+
+.erro {
+    color: #dc2626;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.sucesso {
+    color: #16a34a;
+    background-color: #dcfce7;
+    border: 1px solid #bbf7d0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.mensagem-neutra {
+    color: #1e3a8a;
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.container-erro-token {
+    text-align: center;
+}
+
+.container-erro-token .icone-erro {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.container-erro-token p {
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+
+.campo-senha-wrapper-cadastro {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.campo-senha-wrapper-cadastro input {
+    padding-right: 48px !important;
+}
+
+.container-cadastro .botao-mostrar-senha-cadastro {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 6px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.container-cadastro .botao-mostrar-senha-cadastro:hover {
+    color: #4b5563;
+    background: transparent;
+    transform: translateY(-50%);
+}
+
+.container-cadastro .botao-mostrar-senha-cadastro:focus {
+    outline: none;
+}
+
+.container-cadastro .botao-mostrar-senha-cadastro:focus-visible {
+    color: #2563eb;
+}
+
+.container-cadastro .botao-mostrar-senha-cadastro.ativo {
+    color: #2563eb;
+}
+
+
 @keyframes aparecer {
     from {
         opacity: 0;
@@ -128,7 +241,7 @@
     }
 
     .container-cadastro input,
-    .container-cadastro button {
+    .container-cadastro button[type="submit"] {
         padding: 14px;
     }
 }

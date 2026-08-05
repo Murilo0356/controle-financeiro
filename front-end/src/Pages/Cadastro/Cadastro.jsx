@@ -1,24 +1,31 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Cadastro.css";
 
 import { forcaSenha, corForcaSenha } from "../../utils/ValidarSenha";
 import { validarEmail } from "../../utils/ValidarEmail";
 
+function Cadastro() {
 
-function Cadastro({ onMudarParaLogin }) {
+    const navigate = useNavigate();
 
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
 
+    const [mostrarSenha, setMostrarSenha] = useState(false);
+
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
     const [carregando, setCarregando] = useState(false);
+
     const emailsCadastrados = [
-    "teste@gmail.com",
-    "admin@gmail.com"
+        "teste@gmail.com",
+        "admin@gmail.com"
     ];
+
     function handleSubmit(e) {
 
         e.preventDefault();
@@ -37,9 +44,10 @@ function Cadastro({ onMudarParaLogin }) {
         }
 
         if (emailsCadastrados.includes(email.toLowerCase())) {
-        setErro("Este e-mail já está cadastrado.");
-        return;
-        }      
+            setErro("Este e-mail já está cadastrado.");
+            return;
+        }
+
         if (senha.length < 6) {
             setErro("A senha deve possuir pelo menos 6 caracteres.");
             return;
@@ -64,7 +72,7 @@ function Cadastro({ onMudarParaLogin }) {
             setConfirmarSenha("");
 
             setTimeout(() => {
-                onMudarParaLogin();
+                navigate("/login");
             }, 1500);
 
         }, 1500);
@@ -72,6 +80,7 @@ function Cadastro({ onMudarParaLogin }) {
     }
 
     return (
+
         <div className="container-cadastro">
 
             <h1>Novo Cadastro</h1>
@@ -79,6 +88,7 @@ function Cadastro({ onMudarParaLogin }) {
             <form onSubmit={handleSubmit}>
 
                 <div className="form-group">
+
                     <label>Nome</label>
 
                     <input
@@ -87,9 +97,11 @@ function Cadastro({ onMudarParaLogin }) {
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
                     />
+
                 </div>
 
                 <div className="form-group">
+
                     <label>E-mail</label>
 
                     <input
@@ -98,17 +110,32 @@ function Cadastro({ onMudarParaLogin }) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
+
                 </div>
 
                 <div className="form-group">
+
                     <label>Senha</label>
 
-                    <input
-                        type="password"
-                        placeholder="Digite sua senha"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                    />
+                    <div className="campo-senha-wrapper-cadastro">
+
+                        <input
+                            type={mostrarSenha ? "text" : "password"}
+                            placeholder="Digite sua senha"
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                        />
+
+                        <button
+                            type="button"
+                            className={`botao-mostrar-senha-cadastro ${mostrarSenha ? "ativo" : ""}`}
+                            onClick={() => setMostrarSenha(!mostrarSenha)}
+                        >
+                            {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+
+                    </div>
+
                 </div>
 
                 <div
@@ -121,14 +148,28 @@ function Cadastro({ onMudarParaLogin }) {
                 </div>
 
                 <div className="form-group">
+
                     <label>Confirmar Senha</label>
 
-                    <input
-                        type="password"
-                        placeholder="Confirme sua senha"
-                        value={confirmarSenha}
-                        onChange={(e) => setConfirmarSenha(e.target.value)}
-                    />
+                    <div className="campo-senha-wrapper-cadastro">
+
+                        <input
+                            type={mostrarSenha ? "text" : "password"}
+                            placeholder="Confirme sua senha"
+                            value={confirmarSenha}
+                            onChange={(e) => setConfirmarSenha(e.target.value)}
+                        />
+
+                        <button
+                            type="button"
+                            className={`botao-mostrar-senha-cadastro ${mostrarSenha ? "ativo" : ""}`}
+                            onClick={() => setMostrarSenha(!mostrarSenha)}
+                        >
+                            {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+
+                    </div>
+
                 </div>
 
                 {erro && (
@@ -156,19 +197,23 @@ function Cadastro({ onMudarParaLogin }) {
 
             <p style={{ marginTop: "20px" }}>
                 Já possui uma conta?{" "}
+
                 <a
                     href="#"
                     onClick={(e) => {
                         e.preventDefault();
-                        onMudarParaLogin();
+                        navigate("/login");
                     }}
                 >
                     Fazer Login
                 </a>
+
             </p>
 
         </div>
+
     );
+
 }
 
 export default Cadastro;

@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 import { validarEmail } from "../../utils/validarEmail";
 
-function Login({ onMudarParaCadastro }) {
+function Login() {
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
@@ -29,7 +32,7 @@ function Login({ onMudarParaCadastro }) {
             return;
         }
 
-        // simulacao de login 
+        // simulacao de login - TROCAR DEPOIS
         const usuario = {
             email: "teste@gmail.com",
             senha: "123456"
@@ -50,6 +53,10 @@ function Login({ onMudarParaCadastro }) {
             setCarregando(false);
 
             setSucesso("Login realizado com sucesso!");
+
+            setTimeout(() => {
+                navigate("/dashboard");
+            }, 1000);
 
         }, 1500);
 
@@ -90,17 +97,17 @@ function Login({ onMudarParaCadastro }) {
 
                 </div>
 
-                {erro &&
+                {erro && (
                     <p className="erro">
                         {erro}
                     </p>
-                }
+                )}
 
-                {sucesso &&
+                {sucesso && (
                     <p className="sucesso">
                         {sucesso}
                     </p>
-                }
+                )}
 
                 <button
                     type="submit"
@@ -114,7 +121,13 @@ function Login({ onMudarParaCadastro }) {
             </form>
 
             <p>
-                <a href="#">
+                <a
+                    href="#"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        navigate("/recuperar-senha");
+                    }}
+                >
                     Esqueci minha senha
                 </a>
             </p>
@@ -127,7 +140,7 @@ function Login({ onMudarParaCadastro }) {
                     href="#"
                     onClick={(e) => {
                         e.preventDefault();
-                        onMudarParaCadastro();
+                        navigate("/cadastro");
                     }}
                 >
                     Cadastre-se
