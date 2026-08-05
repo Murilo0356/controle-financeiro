@@ -33,8 +33,7 @@ function RecuperarSenha() {
 
         solicitarRecuperacaoSenha(email)
             .then(() => {
-                // Mensagem sempre neutra: não confirmamos nem negamos
-                // se o e-mail está cadastrado.
+               
                 setEnviado(true);
             })
             .finally(() => {

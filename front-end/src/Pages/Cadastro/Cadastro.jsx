@@ -21,11 +21,6 @@ function Cadastro() {
     const [sucesso, setSucesso] = useState("");
     const [carregando, setCarregando] = useState(false);
 
-    const emailsCadastrados = [
-        "teste@gmail.com",
-        "admin@gmail.com"
-    ];
-
     function handleSubmit(e) {
 
         e.preventDefault();
@@ -43,11 +38,6 @@ function Cadastro() {
             return;
         }
 
-        if (emailsCadastrados.includes(email.toLowerCase())) {
-            setErro("Este e-mail já está cadastrado.");
-            return;
-        }
-
         if (senha.length < 6) {
             setErro("A senha deve possuir pelo menos 6 caracteres.");
             return;
@@ -58,9 +48,30 @@ function Cadastro() {
             return;
         }
 
+        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+        const emailExiste = usuarios.some(
+            (usuario) => usuario.email.toLowerCase() === email.toLowerCase()
+        );
+
+        if (emailExiste) {
+            setErro("Este e-mail já está cadastrado.");
+            return;
+        }
+
         setCarregando(true);
 
         setTimeout(() => {
+
+            const novoUsuario = {
+                nome,
+                email,
+                senha
+            };
+
+            usuarios.push(novoUsuario);
+
+            localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
             setCarregando(false);
 

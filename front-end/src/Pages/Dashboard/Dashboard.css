@@ -1,0 +1,437 @@
+.dash-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #f2f4f9;
+    align-items: stretch;
+}
+
+
+.dash-topbar-mobile {
+    display: none;
+    width: 100%;
+    height: 60px;
+    background-color: #101a34;
+    color: #ffffff;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.dash-botao-hamburguer {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dash-overlay-mobile {
+    display: none;
+}
+
+
+.dash-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #101a34, #16213e);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 20px;
+    gap: 30px;
+    z-index: 100;
+}
+
+.dash-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.dash-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+}
+
+.dash-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: #b9c2dc;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dash-nav-item:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.dash-nav-item:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.dash-nav-item-ativo {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.dash-nav-item-ativo:hover {
+    background-color: #2563eb;
+}
+
+.dash-badge-em-breve {
+    margin-left: auto;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #8b95b3;
+    padding: 3px 7px;
+    border-radius: 999px;
+}
+
+.dash-usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dash-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #2563eb;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.dash-usuario-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dash-usuario-nome {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-usuario-email {
+    font-size: 0.75rem;
+    color: #8b95b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-botao-sair {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    background: transparent;
+    color: #e2e6f0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.dash-botao-sair:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+}
+
+.dash-conteudo {
+    flex-grow: 1;
+    padding: 36px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+}
+
+.dash-cabecalho h1 {
+    font-size: 1.7rem;
+    color: #101a34;
+    margin-bottom: 4px;
+}
+
+.dash-cabecalho p {
+    color: #666f8a;
+    font-size: 0.95rem;
+}
+
+
+.dash-cards-resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.dash-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(16, 26, 52, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-left: 5px solid transparent;
+    transition: 0.25s;
+}
+
+.dash-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.dash-card-topo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dash-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.dash-icon-saldo { color: #2563eb; }
+.dash-icon-receita { color: #16a34a; }
+.dash-icon-despesa { color: #dc2626; }
+
+.dash-card-rotulo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666f8a;
+}
+
+.dash-card-valor {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #101a34;
+}
+
+.dash-card-saldo { border-left-color: #2563eb; }
+.dash-card-receita { border-left-color: #16a34a; }
+.dash-card-receita .dash-card-valor { color: #16a34a; }
+.dash-card-despesa { border-left-color: #dc2626; }
+.dash-card-despesa .dash-card-valor { color: #dc2626; }
+
+
+.dash-inferior {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.dash-grafico-container,
+.dash-lancamentos-container {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 6px 18px rgba(16, 26, 52, 0.06);
+    width: 100%;
+    min-width: 0;
+}
+
+.dash-grafico-container h2,
+.dash-lancamentos-container h2 {
+    font-size: 1.05rem;
+    color: #101a34;
+    margin-bottom: 18px;
+}
+
+.dash-lista-lancamentos {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.dash-lancamento-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #eef0f6;
+}
+
+.dash-lancamento-item:last-child {
+    border-bottom: none;
+}
+
+.dash-lancamento-icone {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.dash-icone-receita {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.dash-icone-despesa {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.dash-lancamento-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.dash-lancamento-descricao {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #101a34;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-lancamento-data {
+    font-size: 0.8rem;
+    color: #8b95b3;
+}
+
+.dash-lancamento-valor {
+    font-size: 0.95rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.dash-valor-receita { color: #16a34a; }
+.dash-valor-despesa { color: #dc2626; }
+
+
+.dash-tela-carregando {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background-color: #f2f4f9;
+    color: #666f8a;
+    font-size: 0.95rem;
+}
+
+.dash-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #dbe2f4;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: dash-girar 0.8s linear infinite;
+}
+
+@keyframes dash-girar {
+    to { transform: rotate(360deg); }
+}
+
+
+@media (max-width: 1100px) {
+    .dash-inferior {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .dash-cards-resumo {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dash-topbar-mobile {
+        display: flex;
+    }
+
+    .dash-overlay-mobile {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 95;
+    }
+
+    .dash-sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 260px;
+        height: 100vh;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .dash-sidebar.aberto {
+        transform: translateX(260px);
+    }
+
+    .dash-conteudo {
+        padding: 84px 16px 24px 16px;
+    }
+
+    .dash-grafico-container,
+    .dash-lancamentos-container {
+        padding: 20px 16px;
+    }
+}

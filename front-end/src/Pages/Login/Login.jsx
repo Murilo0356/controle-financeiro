@@ -32,16 +32,15 @@ function Login() {
             return;
         }
 
-        // simulacao de login - TROCAR DEPOIS
-        const usuario = {
-            email: "teste@gmail.com",
-            senha: "123456"
-        };
+        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
-        if (
-            email !== usuario.email ||
-            senha !== usuario.senha
-        ) {
+        const usuario = usuarios.find(
+            (u) =>
+                u.email.toLowerCase() === email.toLowerCase() &&
+                u.senha === senha
+        );
+
+        if (!usuario) {
             setErro("E-mail ou senha inválidos.");
             return;
         }
@@ -49,6 +48,13 @@ function Login() {
         setCarregando(true);
 
         setTimeout(() => {
+
+            localStorage.setItem("token", "token-mock");
+
+            localStorage.setItem(
+                "usuarioLogado",
+                JSON.stringify(usuario)
+            );
 
             setCarregando(false);
 
