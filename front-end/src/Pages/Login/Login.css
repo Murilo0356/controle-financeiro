@@ -85,7 +85,17 @@
     text-decoration: underline;
 }
 
+.erro {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
 
+.sucesso {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+}
 
 @media (max-width: 480px) {
     .container-login {
