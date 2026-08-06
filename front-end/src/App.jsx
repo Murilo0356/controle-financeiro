@@ -6,48 +6,24 @@ import RecuperarSenha from "./Pages/EsquecerSenha/RecuperarSenha";
 import RedefinirSenha from "./Pages/EsquecerSenha/RedefinirSenha";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import AlterarSenha from "./Pages/Perfil/AlterarSenha"; 
+import RotaProtegida from "./Pages/Componentes/RotaProtegida";
+
 function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<Navigate to="/login" replace />}
-      />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+      <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
 
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+      <Route element={<RotaProtegida />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/perfil" element={<AlterarSenha />} />
+        <Route path="/alterar-senha" element={<AlterarSenha />} />
+      </Route>
 
-      <Route
-        path="/cadastro"
-        element={<Cadastro />}
-      />
-
-      <Route
-        path="/recuperar-senha"
-        element={<RecuperarSenha />}
-      />
-
-      <Route
-        path="/redefinir-senha/:token"
-        element={<RedefinirSenha />}
-      />
-
-      <Route
-        path="/dashboard"
-        element={<Dashboard />}
-      />
-
-      <Route
-        path="/perfil"
-        element={<AlterarSenha />}
-      />
-
-      <Route
-        path="*"
-        element={<Navigate to="/login" replace />}
-      />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
