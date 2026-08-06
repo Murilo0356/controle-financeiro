@@ -110,8 +110,7 @@
     text-align: center;
 }
 
-/* Mensagem neutra da etapa 1: não confirma nem nega
-   se o e-mail existe na base cadastrada */
+
 .mensagem-neutra {
     color: #1e3a8a;
     background-color: #eff6ff;

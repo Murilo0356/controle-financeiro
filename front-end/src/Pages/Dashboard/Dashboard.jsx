@@ -13,23 +13,17 @@ import {
 
 import {
     FaChartColumn,
-    FaMoneyBillTrendUp,
-    FaTags,
-    FaArrowRightFromBracket,
-    FaCircleUser,
-    FaHouse,
     FaWallet,
     FaArrowTrendUp,
     FaArrowTrendDown,
     FaBars,
     FaXmark
 } from "react-icons/fa6";
+
+import Sidebar from "../componentes/Sidebar";
 import "./Dashboard.css";
 
-import {
-    buscarDadosDashboard,
-    fazerLogout
-} from "../../services/dashboardService";
+import { buscarDadosDashboard } from "../../services/dashboardService";
 
 const formatadorMoeda = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -69,11 +63,6 @@ function Dashboard() {
             });
     }, [navigate]);
 
-    function handleLogout() {
-        fazerLogout();
-        navigate("/login", { replace: true });
-    }
-
     if (carregando) {
         return (
             <div className="dash-tela-carregando">
@@ -92,7 +81,7 @@ function Dashboard() {
 
     return (
         <div className="dash-layout">
-            {/* Topbar visível apenas em telas menores */}
+            {/* Topbar Mobile */}
             <div className="dash-topbar-mobile">
                 <div className="dash-logo">
                     <FaChartColumn />
@@ -107,7 +96,7 @@ function Dashboard() {
                 </button>
             </div>
 
-            {/* Fundo escuro ao abrir o menu mobile */}
+            {/* Overlay Mobile */}
             {menuAberto && (
                 <div
                     className="dash-overlay-mobile"
@@ -115,51 +104,15 @@ function Dashboard() {
                 />
             )}
 
-            {/* Sidebar (fixa no Desktop, Gaveta/Drawer no Mobile) */}
-            <aside className={`dash-sidebar ${menuAberto ? "aberto" : ""}`}>
-                <div className="dash-logo dash-logo-sidebar">
-                    <FaChartColumn />
-                    <span>FinDesk</span>
-                </div>
+            {/* Sidebar Reutilizável */}
+            <Sidebar
+                menuAberto={menuAberto}
+                setMenuAberto={setMenuAberto}
+                usuario={usuario}
+                paginaAtiva="dashboard"
+            />
 
-                <nav className="dash-nav">
-                    <button
-                        className="dash-nav-item dash-nav-item-ativo"
-                        onClick={() => setMenuAberto(false)}
-                    >
-                        <FaHouse />
-                        <span>Dashboard</span>
-                    </button>
-
-                    <button className="dash-nav-item" disabled>
-                        <FaMoneyBillTrendUp />
-                        <span>Transações</span>
-                        <span className="dash-badge-em-breve">Em breve</span>
-                    </button>
-
-                    <button className="dash-nav-item" disabled>
-                        <FaTags />
-                        <span>Categorias</span>
-                        <span className="dash-badge-em-breve">Em breve</span>
-                    </button>
-                </nav>
-
-                <div className="dash-usuario">
-                    <div className="dash-avatar">
-                        <FaCircleUser />
-                    </div>
-                    <div className="dash-usuario-info">
-                        <span className="dash-usuario-nome">{usuario.nome}</span>
-                        <span className="dash-usuario-email">{usuario.email}</span>
-                    </div>
-                </div>
-
-                <button className="dash-botao-sair" onClick={handleLogout}>
-                    <FaArrowRightFromBracket />
-                    <span>Sair</span>
-                </button>
-            </aside>
-
+            {/* Conteúdo Principal */}
             <main className="dash-conteudo">
                 <header className="dash-cabecalho">
                     <div>
