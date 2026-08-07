@@ -10,32 +10,47 @@ import com.ifpr.backend.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
-    
-    @Autowired// faz a gerencia de todas as dependencias
-    private UsuarioRepository repository;
 
-    public Usuario inserir(Usuario usuario){
-        return repository.save(usuario);
-    }
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    public List<Usuario> listarTodos(){
-        return repository.findAll();
+    public List<Usuario> listarTodos() {
+        return usuarioRepository.findAll();
     }
 
     public Usuario buscarPorId(Long id) {
-        Usuario usuario = repository.findById(id).orElseThrow(() -> new RuntimeException("Usuario não existe"));
-        return usuario;
+        return usuarioRepository.findById(id).orElse(null);
     }
 
-    public void remover(Long id){
-      Usuario usuario = buscarPorId(id);  
-      repository.delete(usuario);
+    public Usuario cadastrar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 
-    public Usuario alterar(Usuario usuario){
-        Usuario usuarioDB = buscarPorId(usuario.getId());
-        usuarioDB.setNome(usuario.getNome());
-        usuarioDB.setEmail(usuario.getEmail());
-        return repository.save(usuarioDB);
+    public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
+
+        Usuario usuario = buscarPorId(id);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        usuario.setNome(usuarioAtualizado.getNome());
+        usuario.setEmail(usuarioAtualizado.getEmail());
+        usuario.setSenhaCriptografada(usuarioAtualizado.getSenhaCriptografada());
+
+        return usuarioRepository.save(usuario);
+    }
+
+    public boolean excluir(Long id) {
+
+        Usuario usuario = buscarPorId(id);
+
+        if (usuario == null) {
+            return false;
+        }
+
+        usuarioRepository.delete(usuario);
+
+        return true;
     }
 }

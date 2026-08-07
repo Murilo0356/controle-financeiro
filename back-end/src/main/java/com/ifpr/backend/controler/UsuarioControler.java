@@ -5,53 +5,66 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ifpr.backend.model.Usuario;
 import com.ifpr.backend.service.UsuarioService;
 
-import jakarta.validation.Valid;
-
-
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/usuarios")
+@CrossOrigin(origins = "*")
 public class UsuarioControler {
-    
-    @Autowired
-    private UsuarioService service;
-    
-    @GetMapping
-    public ResponseEntity<List<Usuario>> buscarTodos(){
-        return ResponseEntity.ok(service.listarTodos());
-    }
 
-    @PostMapping
-    public ResponseEntity<Usuario> inserir(@RequestBody @Valid Usuario usuario){
-        Usuario usurioDB = service.inserir(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usurioDB);
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @GetMapping
+    public ResponseEntity<List<Usuario>> listarTodos() {
+        return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorid(@PathVariable("id") Long id){
-        return ResponseEntity.ok(service.buscarPorId(id));
+    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
+
+        Usuario usuario = usuarioService.buscarPorId(id);
+
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(usuario);
+    }
+
+    @PostMapping
+    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
+
+        Usuario novoUsuario = usuarioService.cadastrar(usuario);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
+
+        Usuario usuarioAtualizado = usuarioService.atualizar(id, usuario);
+
+        if (usuarioAtualizado == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(usuarioAtualizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable("id") Long id){
-        service.remover(id);
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+
+        boolean excluiu = usuarioService.excluir(id);
+
+        if (!excluiu) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping
-    public ResponseEntity<Usuario> alterar(@RequestBody @Valid Usuario usuario) {
-        Usuario usurioDB = service.alterar(usuario);
-        return ResponseEntity.ok(usurioDB);
-    }
 }
