@@ -148,7 +148,6 @@
     display: none;
 }
 
-/* Mobile Responsivo */
 @media (max-width: 768px) {
     .sb-topbar-mobile {
         display: flex;

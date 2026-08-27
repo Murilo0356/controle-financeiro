@@ -1,61 +1,85 @@
-const EMAILS_CADASTRADOS = [
-    "teste@gmail.com",
-    "admin@gmail.com"
-];
+import BaseService from "./BaseService";
 
-export function solicitarRecuperacaoSenha(email) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const emailExiste = EMAILS_CADASTRADOS.includes(email.toLowerCase());
-            if (emailExiste) {
-                console.info(`[mock] link de redefinição enviado para ${email}`);
-            }
-            resolve({ sucesso: true });
-        }, 1200);
+class AuthService extends BaseService {
+
+  constructor() {
+    super("/usuarios");
+  }
+
+ async login(email, senha) {
+  const usuario = await this.post("/login", {
+    email,
+    senha
+  });
+
+  if (usuario) {
+    localStorage.setItem(
+      "usuarioLogado",
+      JSON.stringify(usuario)
+    );
+  }
+
+  return usuario;
+}
+
+  async solicitarRecuperacaoSenha(email) {
+    const usuarios = await this.listarTodos();
+
+    const usuarioExiste = usuarios.some(
+      (u) => u.email.toLowerCase() === email.toLowerCase()
+    );
+
+    if (!usuarioExiste) {
+      throw new Error("E-mail não encontrado cadastrado no sistema.");
+    }
+
+    return {
+      sucesso: true,
+      mensagem: "Instruções enviadas para o e-mail."
+    };
+  }
+
+  async alterarSenha(idUsuario, senhaAtual, novaSenha) {
+
+    if (senhaAtual === novaSenha) {
+      throw new Error(
+        "A nova senha deve ser diferente da senha atual."
+      );
+    }
+
+    const usuario = await this.buscarPorId(idUsuario);
+    const usuarioAtualizado = await this.atualizar(idUsuario, {
+      ...usuario,
+      senhaCriptografada: novaSenha
     });
+
+    localStorage.setItem(
+      "usuarioLogado",
+      JSON.stringify(usuarioAtualizado)
+    );
+
+    return usuarioAtualizado;
+  }
+
+  fazerLogout() {
+    localStorage.removeItem("usuarioLogado");
+    localStorage.removeItem("token");
+  }
 }
 
-export function tokenEhValido(token) {
-    return Boolean(token && token.trim().length > 0);
-}
+const authServiceInstance = new AuthService();
 
-export function redefinirSenha(token, novaSenha) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (!tokenEhValido(token)) {
-                reject(new Error("Token inválido ou expirado. Solicite uma nova recuperação de senha."));
-                return;
-            }
+export const solicitarRecuperacaoSenha = (email) =>
+  authServiceInstance.solicitarRecuperacaoSenha(email);
 
-            resolve({ sucesso: true });
-        }, 1200);
-    });
-}
+export const alterarSenha = (idUsuario, senhaAtual, novaSenha) =>
+  authServiceInstance.alterarSenha(
+    idUsuario,
+    senhaAtual,
+    novaSenha
+  );
 
-export function alterarSenha(idUsuario, senhaAtual, novaSenha) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const usuarioSalvoRaw = localStorage.getItem("usuarioLogado") || localStorage.getItem("findesk_usuario");
-            const usuarioSalvo = usuarioSalvoRaw ? JSON.parse(usuarioSalvoRaw) : null;
+export const fazerLogout = () =>
+  authServiceInstance.fazerLogout();
 
-            const senhaValida = usuarioSalvo?.senha || "123456";
-
-            if (senhaAtual !== senhaValida) {
-                reject(new Error("Senha atual incorreta."));
-                return;
-            }
-
-            if (senhaAtual === novaSenha) {
-                reject(new Error("A nova senha deve ser diferente da senha atual."));
-                return;
-            }
-
-            if (usuarioSalvo) {
-                usuarioSalvo.senha = novaSenha;
-                localStorage.setItem("usuarioLogado", JSON.stringify(usuarioSalvo));
-            }
-
-            resolve({ sucesso: true });
-        }, 1200);
-    });
-}
+export default authServiceInstance;

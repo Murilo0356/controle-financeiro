@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import authService from "../../services/authService";
+import { validarEmail } from "../../utils/validarEmail";
 import "./Login.css";
 
-import { validarEmail } from "../../utils/validarEmail";
-
 function Login() {
-
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -15,8 +14,7 @@ function Login() {
     const [sucesso, setSucesso] = useState("");
     const [carregando, setCarregando] = useState(false);
 
-    function handleSubmit(e) {
-
+    async function handleSubmit(e) {
         e.preventDefault();
 
         setErro("");
@@ -32,98 +30,59 @@ function Login() {
             return;
         }
 
-        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-
-        const usuario = usuarios.find(
-            (u) =>
-                u.email.toLowerCase() === email.toLowerCase() &&
-                u.senha === senha
-        );
-
-        if (!usuario) {
-            setErro("E-mail ou senha inválidos.");
-            return;
-        }
-
         setCarregando(true);
 
-        setTimeout(() => {
+        try {
+            const usuario = await authService.login(email, senha);
 
-            localStorage.setItem("token", "token-mock");
+            if (usuario) {
+                setSucesso("Login realizado com sucesso!");
 
-            localStorage.setItem(
-                "usuarioLogado",
-                JSON.stringify(usuario)
-            );
-
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 1000);
+            } else {
+                setErro("E-mail ou senha inválidos.");
+            }
+        } catch (err) {
+            setErro(err.message || "E-mail ou senha inválidos.");
+        } finally {
             setCarregando(false);
-
-            setSucesso("Login realizado com sucesso!");
-
-            setTimeout(() => {
-                navigate("/dashboard");
-            }, 1000);
-
-        }, 1500);
-
+        }
     }
 
     return (
-
         <div className="container-login">
-
             <h1>FinDesk</h1>
             <h2>Login</h2>
 
             <form onSubmit={handleSubmit}>
-
                 <div>
-
                     <label>E-mail</label>
-
                     <input
                         type="email"
                         placeholder="Digite seu e-mail"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-
                 </div>
 
                 <div>
-
                     <label>Senha</label>
-
                     <input
                         type="password"
                         placeholder="Digite sua senha"
                         value={senha}
                         onChange={(e) => setSenha(e.target.value)}
                     />
-
                 </div>
 
-                {erro && (
-                    <p className="erro">
-                        {erro}
-                    </p>
-                )}
+                {erro && <p className="erro">{erro}</p>}
+                {sucesso && <p className="sucesso">{sucesso}</p>}
 
-                {sucesso && (
-                    <p className="sucesso">
-                        {sucesso}
-                    </p>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={carregando}
-                >
-                    {carregando
-                        ? "Entrando..."
-                        : "Entrar"}
+                <button type="submit" disabled={carregando}>
+                    {carregando ? "Entrando..." : "Entrar"}
                 </button>
-
             </form>
 
             <p>
@@ -139,9 +98,7 @@ function Login() {
             </p>
 
             <p>
-
                 Não possui uma conta?{" "}
-
                 <a
                     href="#"
                     onClick={(e) => {
@@ -151,13 +108,9 @@ function Login() {
                 >
                     Cadastre-se
                 </a>
-
             </p>
-
         </div>
-
     );
-
 }
 
 export default Login;

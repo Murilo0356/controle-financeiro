@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import usuarioService from "../../services/usuarioService";
+import { forcaSenha, corForcaSenha } from "../../utils/validarSenha";
+import { validarEmail } from "../../utils/validarEmail";
 import "./Cadastro.css";
 
-import { forcaSenha, corForcaSenha } from "../../utils/ValidarSenha";
-import { validarEmail } from "../../utils/ValidarEmail";
-
 function Cadastro() {
-
     const navigate = useNavigate();
 
     const [nome, setNome] = useState("");
@@ -21,8 +20,7 @@ function Cadastro() {
     const [sucesso, setSucesso] = useState("");
     const [carregando, setCarregando] = useState(false);
 
-    function handleSubmit(e) {
-
+    async function handleSubmit(e) {
         e.preventDefault();
 
         setErro("");
@@ -48,32 +46,14 @@ function Cadastro() {
             return;
         }
 
-        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-
-        const emailExiste = usuarios.some(
-            (usuario) => usuario.email.toLowerCase() === email.toLowerCase()
-        );
-
-        if (emailExiste) {
-            setErro("Este e-mail já está cadastrado.");
-            return;
-        }
-
         setCarregando(true);
 
-        setTimeout(() => {
-
-            const novoUsuario = {
+        try {
+            await usuarioService.cadastrar({
                 nome,
                 email,
-                senha
-            };
-
-            usuarios.push(novoUsuario);
-
-            localStorage.setItem("usuarios", JSON.stringify(usuarios));
-
-            setCarregando(false);
+                senhaCriptografada: senha
+            });
 
             setSucesso("Cadastro realizado com sucesso!");
 
@@ -85,51 +65,41 @@ function Cadastro() {
             setTimeout(() => {
                 navigate("/login");
             }, 1500);
-
-        }, 1500);
-
+        } catch (err) {
+            setErro("Erro ao cadastrar. E-mail já cadastrado ou dados inválidos.");
+        } finally {
+            setCarregando(false);
+        }
     }
 
     return (
-
         <div className="container-cadastro">
-
             <h1>Novo Cadastro</h1>
 
             <form onSubmit={handleSubmit}>
-
                 <div className="form-group">
-
                     <label>Nome</label>
-
                     <input
                         type="text"
                         placeholder="Digite seu nome"
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
                     />
-
                 </div>
 
                 <div className="form-group">
-
                     <label>E-mail</label>
-
                     <input
                         type="email"
                         placeholder="Digite seu e-mail"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-
                 </div>
 
                 <div className="form-group">
-
                     <label>Senha</label>
-
                     <div className="campo-senha-wrapper-cadastro">
-
                         <input
                             type={mostrarSenha ? "text" : "password"}
                             placeholder="Digite sua senha"
@@ -144,9 +114,7 @@ function Cadastro() {
                         >
                             {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
                         </button>
-
                     </div>
-
                 </div>
 
                 <div
@@ -159,11 +127,8 @@ function Cadastro() {
                 </div>
 
                 <div className="form-group">
-
                     <label>Confirmar Senha</label>
-
                     <div className="campo-senha-wrapper-cadastro">
-
                         <input
                             type={mostrarSenha ? "text" : "password"}
                             placeholder="Confirme sua senha"
@@ -178,37 +143,19 @@ function Cadastro() {
                         >
                             {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
                         </button>
-
                     </div>
-
                 </div>
 
-                {erro && (
-                    <p className="erro">
-                        {erro}
-                    </p>
-                )}
+                {erro && <p className="erro">{erro}</p>}
+                {sucesso && <p className="sucesso">{sucesso}</p>}
 
-                {sucesso && (
-                    <p className="sucesso">
-                        {sucesso}
-                    </p>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={carregando}
-                >
-                    {carregando
-                        ? "Cadastrando..."
-                        : "Cadastrar"}
+                <button type="submit" disabled={carregando}>
+                    {carregando ? "Cadastrando..." : "Cadastrar"}
                 </button>
-
             </form>
 
             <p style={{ marginTop: "20px" }}>
                 Já possui uma conta?{" "}
-
                 <a
                     href="#"
                     onClick={(e) => {
@@ -218,13 +165,9 @@ function Cadastro() {
                 >
                     Fazer Login
                 </a>
-
             </p>
-
         </div>
-
     );
-
 }
 
 export default Cadastro;

@@ -3,12 +3,17 @@ package com.ifpr.backend.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,7 +30,7 @@ public class Usuario {
     private Long id;
 
     @NotBlank(message = "Nome obrigatório")
-    @Size(min = 10, message = "Insira um nome completo")
+    @Size(min = 2, message = "O nome deve ter pelo menos 2 caracteres")
     private String nome;
 
     @NotBlank(message = "Email obrigatório")
@@ -33,28 +38,45 @@ public class Usuario {
     private String email;
 
     @NotBlank(message = "Senha obrigatória")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senhaCriptografada;
 
     private LocalDateTime criadoEm;
 
     private LocalDateTime atualizadoEm;
 
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
+
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private List<Categoria> categorias;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "dono", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private List<Carteira> carteiras;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private List<CarteiraMembro> carteiraMembros;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "criadoPor", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private List<Transacao> transacoes;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     private List<Token> tokens;

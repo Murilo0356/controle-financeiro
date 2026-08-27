@@ -7,10 +7,13 @@ import java.time.LocalDateTime;
 import com.ifpr.backend.enums.TipoTransacao;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -33,6 +36,7 @@ public class Transacao {
     private Usuario criadoPor;
 
     @NotNull(message = "Tipo obrigatório")
+    @Enumerated(EnumType.STRING)
     private TipoTransacao tipo;
 
     @NotNull(message = "Valor obrigatório")
@@ -45,4 +49,9 @@ public class Transacao {
     private LocalDate data;
 
     private LocalDateTime criadoEm;
+
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+    }
 }

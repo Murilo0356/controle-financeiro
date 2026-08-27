@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -31,7 +32,14 @@ public class Carteira {
 
     private String descricao;
 
+    private Double saldo = 0.0;
+
     private LocalDateTime criadoEm;
+
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = LocalDateTime.now();
+    }
 
     @OneToMany(mappedBy = "carteira", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)

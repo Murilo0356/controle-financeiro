@@ -34,8 +34,15 @@ public class CarteiraMembroService {
             return null;
         }
 
-        membro.setCarteira(membroAtualizado.getCarteira());
-        membro.setUsuario(membroAtualizado.getUsuario());
+        if (membroAtualizado.getCarteira() != null) {
+            membro.setCarteira(membroAtualizado.getCarteira());
+        }
+        if (membroAtualizado.getUsuario() != null) {
+            membro.setUsuario(membroAtualizado.getUsuario());
+        }
+        if (membroAtualizado.getPapel() != null) {
+            membro.setPapel(membroAtualizado.getPapel());
+        }
 
         return carteiraMembroRepository.save(membro);
     }
@@ -52,5 +59,4 @@ public class CarteiraMembroService {
 
         return true;
     }
-
 }

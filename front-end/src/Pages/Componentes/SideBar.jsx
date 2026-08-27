@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaHouse, FaMoneyBillTransfer, FaTags, FaRightFromBracket, FaChartColumn, FaBars, FaXmark } from "react-icons/fa6";
+import { FaUser, FaHouse, FaMoneyBillTransfer,FaWallet, FaTags, FaRightFromBracket, FaChartColumn, FaBars, FaXmark } from "react-icons/fa6";
 import "./SideBar.css";
 
 function Sidebar({ menuAberto, setMenuAberto, usuario, paginaAtiva, onLogout }) {
@@ -56,16 +56,26 @@ function Sidebar({ menuAberto, setMenuAberto, usuario, paginaAtiva, onLogout }) 
                         <span>Dashboard</span>
                     </button>
 
-                    <button className="sb-nav-item" title="Em breve">
+                    <button
+                        className={classeItem("lancamento")}
+                        onClick={() => irPara("/lancamento")}
+                    >
                         <FaMoneyBillTransfer />
                         <span>Transações</span>
-                        <span className="sb-badge-em-breve">em breve</span>
                     </button>
 
-                    <button className="sb-nav-item" title="Em breve">
+                    <button
+                        className={classeItem("categoria")}
+                        onClick={() => irPara("/categoria")}>
                         <FaTags />
                         <span>Categorias</span>
-                        <span className="sb-badge-em-breve">em breve</span>
+                    </button>
+
+                     <button
+                        className={classeItem("carteira")}
+                        onClick={() => irPara("/carteira")}>
+                        <FaWallet />
+                        <span>Carteira</span>
                     </button>
 
                     <button

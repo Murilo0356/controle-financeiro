@@ -23,7 +23,7 @@ import {
 import Sidebar from "../componentes/Sidebar";
 import "./Dashboard.css";
 
-import { buscarDadosDashboard } from "../../services/dashboardService";
+import { buscarDadosDashboard, buscarUsuarioLogado } from "../../services/dashboardService";
 
 const formatadorMoeda = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -43,9 +43,9 @@ function Dashboard() {
     const [menuAberto, setMenuAberto] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const usuarioLogado = buscarUsuarioLogado();
 
-        if (!token) {
+        if (!usuarioLogado) {
             navigate("/login", { replace: true });
             return;
         }
@@ -81,7 +81,6 @@ function Dashboard() {
 
     return (
         <div className="dash-layout">
-            {/* Topbar Mobile */}
             <div className="dash-topbar-mobile">
                 <div className="dash-logo">
                     <FaChartColumn />
@@ -96,7 +95,6 @@ function Dashboard() {
                 </button>
             </div>
 
-            {/* Overlay Mobile */}
             {menuAberto && (
                 <div
                     className="dash-overlay-mobile"
@@ -104,7 +102,6 @@ function Dashboard() {
                 />
             )}
 
-            {/* Sidebar Reutilizável */}
             <Sidebar
                 menuAberto={menuAberto}
                 setMenuAberto={setMenuAberto}
@@ -112,11 +109,10 @@ function Dashboard() {
                 paginaAtiva="dashboard"
             />
 
-            {/* Conteúdo Principal */}
             <main className="dash-conteudo">
                 <header className="dash-cabecalho">
                     <div>
-                        <h1>Olá, {usuario.nome.split(" ")[0]}</h1>
+                        <h1>Olá, {usuario?.nome ? usuario.nome.split(" ")[0] : "Usuário"}</h1>
                         <p>Aqui está o resumo financeiro referente a {mesAtual}.</p>
                     </div>
                 </header>
@@ -162,38 +158,53 @@ function Dashboard() {
                 <section className="dash-inferior">
                     <div className="dash-grafico-container">
                         <h2>Evolução Financeira</h2>
-                        <ResponsiveContainer width="100%" height={330}>
-                            <BarChart data={grafico} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#edf1f7" />
-                                <XAxis dataKey="mes" stroke="#64748b" />
-                                <YAxis stroke="#64748b" tickFormatter={(valor) => `R$${valor / 1000}k`} />
-                                <Tooltip formatter={(valor) => formatadorMoeda.format(valor)} />
-                                <Legend />
-                                <Bar dataKey="receitas" name="Receitas" fill="#22c55e" radius={[8, 8, 0, 0]} />
-                                <Bar dataKey="despesas" name="Despesas" fill="#ef4444" radius={[8, 8, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {grafico.length === 0 ? (
+                            <p style={{ color: "#64748b", marginTop: "20px" }}>
+                                Nenhuma movimentação registrada para exibir no gráfico.
+                            </p>
+                        ) : (
+                            <ResponsiveContainer width="100%" height={330}>
+                                <BarChart data={grafico} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#edf1f7" />
+                                    <XAxis dataKey="mes" stroke="#64748b" />
+                                    <YAxis stroke="#64748b" tickFormatter={(valor) => `R$${valor}`} />
+                                    <Tooltip formatter={(valor) => formatadorMoeda.format(valor)} />
+                                    <Legend />
+                                    <Bar dataKey="receitas" name="Receitas" fill="#22c55e" radius={[8, 8, 0, 0]} />
+                                    <Bar dataKey="despesas" name="Despesas" fill="#ef4444" radius={[8, 8, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
 
                     <div className="dash-lancamentos-container">
                         <h2>Últimos Lançamentos</h2>
                         <ul className="dash-lista-lancamentos">
-                            {lancamentos.map((lancamento) => (
-                                <li key={lancamento.id} className="dash-lancamento-item">
-                                    <div className={lancamento.tipo === "receita" ? "dash-lancamento-icone dash-icone-receita" : "dash-lancamento-icone dash-icone-despesa"}>
-                                        {lancamento.tipo === "receita" ? <FaArrowTrendUp /> : <FaArrowTrendDown />}
-                                    </div>
-                                    <div className="dash-lancamento-info">
-                                        <span className="dash-lancamento-descricao">{lancamento.descricao}</span>
-                                        <span className="dash-lancamento-data">
-                                            {formatadorData.format(new Date(lancamento.data))}
-                                        </span>
-                                    </div>
-                                    <span className={lancamento.tipo === "receita" ? "dash-lancamento-valor dash-valor-receita" : "dash-lancamento-valor dash-valor-despesa"}>
-                                        {lancamento.tipo === "receita" ? "+" : "-"} {formatadorMoeda.format(lancamento.valor)}
-                                    </span>
-                                </li>
-                            ))}
+                            {lancamentos.length === 0 ? (
+                                <p style={{ color: "#64748b", marginTop: "10px" }}>
+                                    Nenhum lançamento encontrado.
+                                </p>
+                            ) : (
+                                lancamentos.map((lancamento) => {
+                                    const isReceita = lancamento.tipo === "RECEITA" || lancamento.tipo === "receita";
+                                    return (
+                                        <li key={lancamento.id} className="dash-lancamento-item">
+                                            <div className={isReceita ? "dash-lancamento-icone dash-icone-receita" : "dash-lancamento-icone dash-icone-despesa"}>
+                                                {isReceita ? <FaArrowTrendUp /> : <FaArrowTrendDown />}
+                                            </div>
+                                            <div className="dash-lancamento-info">
+                                                <span className="dash-lancamento-descricao">{lancamento.descricao}</span>
+                                                <span className="dash-lancamento-data">
+                                                    {formatadorData.format(new Date(lancamento.data))}
+                                                </span>
+                                            </div>
+                                            <span className={isReceita ? "dash-lancamento-valor dash-valor-receita" : "dash-lancamento-valor dash-valor-despesa"}>
+                                                {isReceita ? "+" : "-"} {formatadorMoeda.format(lancamento.valor)}
+                                            </span>
+                                        </li>
+                                    );
+                                })
+                            )}
                         </ul>
                     </div>
                 </section>
