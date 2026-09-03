@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./Pages/Login/Login";
 import Cadastro from "./Pages/Cadastro/Cadastro";
 import RecuperarSenha from "./Pages/EsquecerSenha/RecuperarSenha";
+import MudarSenha from "./Pages/EsquecerSenha/MudarSenha";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import AlterarSenha from "./Pages/Perfil/AlterarSenha";
 import Lancamentos from "./Pages/Lancamentos/Lancamento";
@@ -17,6 +18,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+      <Route path="/redefinir-senha" element={<MudarSenha />} />
 
       <Route element={<RotaProtegida />}>
         <Route path="/dashboard" element={<Dashboard />} />

@@ -2,6 +2,7 @@ package com.ifpr.backend.service;
 
 import java.util.List;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,6 @@ public class UsuarioService {
     }
 
     public Usuario cadastrar(Usuario usuario) {
-
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new IllegalArgumentException("E-mail já cadastrado.");
         }
@@ -42,8 +42,23 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario login(String email, String senha) {
+    public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
+        Usuario usuarioExistente = buscarPorId(id);
+        if (usuarioExistente == null) {
+            return null;
+        }
 
+        if (usuarioAtualizado.getNome() != null) {
+            usuarioExistente.setNome(usuarioAtualizado.getNome());
+        }
+        if (usuarioAtualizado.getEmail() != null) {
+            usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+        }
+
+        return usuarioRepository.save(usuarioExistente);
+    }
+
+    public Usuario login(String email, String senha) {
         Usuario usuario = usuarioRepository.findByEmail(email)
             .orElseThrow(() ->
                 new IllegalArgumentException("E-mail ou senha inválidos.")
@@ -59,32 +74,19 @@ public class UsuarioService {
         return usuario;
     }
 
-    public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
+    public void alterarSenha(Long idUsuario, String senhaAtual, String novaSenha) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 
-        Usuario usuario = buscarPorId(id);
-
-        if (usuario == null) {
-            return null;
+        if (!passwordEncoder.matches(senhaAtual, usuario.getSenhaCriptografada())) {
+            throw new BadCredentialsException("A senha atual está incorreta.");
         }
 
-        usuario.setNome(usuarioAtualizado.getNome());
-        usuario.setEmail(usuarioAtualizado.getEmail());
-
-        if (usuarioAtualizado.getSenhaCriptografada() != null
-                && !usuarioAtualizado.getSenhaCriptografada().isBlank()) {
-
-            usuario.setSenhaCriptografada(
-                passwordEncoder.encode(
-                    usuarioAtualizado.getSenhaCriptografada()
-                )
-            );
-        }
-
-        return usuarioRepository.save(usuario);
+        usuario.setSenhaCriptografada(passwordEncoder.encode(novaSenha));
+        usuarioRepository.save(usuario);
     }
 
     public boolean excluir(Long id) {
-
         Usuario usuario = buscarPorId(id);
 
         if (usuario == null) {

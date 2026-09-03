@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import com.ifpr.backend.model.Usuario;
@@ -24,20 +25,20 @@ public class UsuarioControler {
     private TokenService tokenService; 
 
     @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-    try {
-        Usuario usuario = usuarioService.login(loginRequest.getEmail(), loginRequest.getSenha());
-        
-        String token = tokenService.gerarTokenJwt(usuario.getEmail());
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            Usuario usuario = usuarioService.login(loginRequest.getEmail(), loginRequest.getSenha());
+            
+            String token = tokenService.gerarTokenJwt(usuario.getEmail());
 
-        return ResponseEntity.ok(Map.of(
-            "usuario", usuario,
-            "token", token
-        ));
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.ok(Map.of(
+                "usuario", usuario,
+                "token", token
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
-}
 
     @GetMapping
     public ResponseEntity<List<Usuario>> listarTodos() {
@@ -68,6 +69,18 @@ public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(usuarioAtualizado);
     }
 
+    @PutMapping("/{id}/alterar-senha")
+    public ResponseEntity<?> alterarSenha(@PathVariable Long id, @RequestBody AlterarSenhaRequest request) {
+        try {
+            usuarioService.alterarSenha(id, request.getSenhaAtual(), request.getNovaSenha());
+            return ResponseEntity.ok().build();
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         boolean excluiu = usuarioService.excluir(id);
@@ -86,4 +99,14 @@ class LoginRequest {
     public void setEmail(String email) { this.email = email; }
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+}
+
+class AlterarSenhaRequest {
+    private String senhaAtual;
+    private String novaSenha;
+
+    public String getSenhaAtual() { return senhaAtual; }
+    public void setSenhaAtual(String senhaAtual) { this.senhaAtual = senhaAtual; }
+    public String getNovaSenha() { return novaSenha; }
+    public void setNovaSenha(String novaSenha) { this.novaSenha = novaSenha; }
 }
