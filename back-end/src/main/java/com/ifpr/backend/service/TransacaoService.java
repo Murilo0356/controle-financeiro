@@ -76,9 +76,9 @@ public class TransacaoService {
         BigDecimal valorTransacao = transacao.getValor();
 
         if (transacao.getTipo() == TipoTransacao.RECEITA) {
-            carteira.setSaldo(saldoAtual + valorTransacao.doubleValue());
+            carteira.setSaldo(Double.valueOf(saldoAtual + valorTransacao.doubleValue()));
         } else if (transacao.getTipo() == TipoTransacao.DESPESA) {
-            carteira.setSaldo(saldoAtual - valorTransacao.doubleValue());
+            carteira.setSaldo(Double.valueOf(saldoAtual - valorTransacao.doubleValue()));
         }
 
         carteiraRepository.save(carteira);
@@ -132,9 +132,9 @@ public class TransacaoService {
             BigDecimal valor = transacao.getValor();
 
             if (transacao.getTipo() == TipoTransacao.RECEITA) {
-                carteira.setSaldo(saldoAtual - valor.doubleValue());
+                carteira.setSaldo(Double.valueOf(saldoAtual - valor.doubleValue()));
             } else if (transacao.getTipo() == TipoTransacao.DESPESA) {
-                carteira.setSaldo(saldoAtual + valor.doubleValue());
+                carteira.setSaldo(Double.valueOf(saldoAtual + valor.doubleValue()));
             }
             carteiraRepository.save(carteira);
         }

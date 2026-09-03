@@ -1,57 +1,60 @@
 package com.ifpr.backend.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.ifpr.backend.model.Token;
-import com.ifpr.backend.repository.TokenRepository;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Service
 public class TokenService {
 
-    @Autowired
-    private TokenRepository tokenRepository;
+    @Value("${jwt.secret:uma_chave_secreta_com_pelo_menos_32_caracteres_123456}")
+    private String secret;
 
-    public List<Token> listarTodos() {
-        return tokenRepository.findAll();
+    @Value("${jwt.expiration:86400000}")
+    private Long expiration;
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Token buscarPorId(Long id) {
-        return tokenRepository.findById(id).orElse(null);
+    public String gerarTokenJwt(String email) {
+        Date agora = new Date();
+        Date dataExpiracao = new Date(agora.getTime() + expiration);
+
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(agora)
+                .expiration(dataExpiracao)
+                .signWith(getSigningKey())
+                .compact();
     }
 
-    public Token cadastrar(Token token) {
-        return tokenRepository.save(token);
+    public String getEmailDoToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
     }
 
-    public Token atualizar(Long id, Token tokenAtualizado) {
-
-        Token token = buscarPorId(id);
-
-        if (token == null) {
-            return null;
-        }
-
-        token.setToken(tokenAtualizado.getToken());
-        token.setExpiraEm(tokenAtualizado.getExpiraEm());
-        token.setUsuario(tokenAtualizado.getUsuario());
-
-        return tokenRepository.save(token);
-    }
-
-    public boolean excluir(Long id) {
-
-        Token token = buscarPorId(id);
-
-        if (token == null) {
+    public boolean isTokenValido(String token) {
+        try {
+            Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (Exception e) {
             return false;
         }
-
-        tokenRepository.delete(token);
-
-        return true;
     }
-
 }

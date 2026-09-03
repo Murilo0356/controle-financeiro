@@ -1,4 +1,4 @@
-import usuarioService from "./usuarioService";
+import usuarioService from "./UsuarioService";
 import transacaoService from "./transacaoService";
 import authService from "./authService";
 

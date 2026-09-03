@@ -17,12 +17,17 @@ import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Data;
+
+import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"categorias", "carteiras", "carteiraMembros", "transacoes", "tokens"})
+@EqualsAndHashCode(exclude = {"categorias", "carteiras", "carteiraMembros", "transacoes", "tokens"})
 public class Usuario {
 
     @Id
@@ -58,27 +63,22 @@ public class Usuario {
 
     @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
     private List<Categoria> categorias;
 
     @JsonIgnore
     @OneToMany(mappedBy = "dono", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
     private List<Carteira> carteiras;
 
     @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
     private List<CarteiraMembro> carteiraMembros;
 
     @JsonIgnore
     @OneToMany(mappedBy = "criadoPor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
     private List<Transacao> transacoes;
 
     @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Setter(AccessLevel.NONE)
     private List<Token> tokens;
 
     public void setCategorias(List<Categoria> categorias) {

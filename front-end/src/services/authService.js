@@ -6,21 +6,25 @@ class AuthService extends BaseService {
     super("/usuarios");
   }
 
- async login(email, senha) {
-  const usuario = await this.post("/login", {
-    email,
-    senha
-  });
+  async login(email, senha) {
+    const resposta = await this.post("/login", {
+      email,
+      senha
+    });
 
-  if (usuario) {
-    localStorage.setItem(
-      "usuarioLogado",
-      JSON.stringify(usuario)
-    );
+    if (resposta) {
+      localStorage.setItem(
+        "usuarioLogado",
+        JSON.stringify(resposta.usuario || resposta)
+      );
+
+      if (resposta.token) {
+        localStorage.setItem("token", resposta.token);
+      }
+    }
+
+    return resposta;
   }
-
-  return usuario;
-}
 
   async solicitarRecuperacaoSenha(email) {
     const usuarios = await this.listarTodos();
